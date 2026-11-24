@@ -191,7 +191,9 @@ function writeURL() {
   const url = location.pathname + (q.toString() ? "?" + q : "") + location.hash;
   try { history.replaceState(null, "", url); } catch (e) {}
   $("shareUrl").value = location.origin + url;
-  try { localStorage.setItem("seestarSettings", JSON.stringify(settings)); } catch (e) {}
+  // remember only what differs from the defaults, so a new default location still reaches returning visitors
+  const diff = Object.fromEntries(Object.entries(settings).filter(([k, v]) => JSON.stringify(v) !== JSON.stringify(P.DEFAULTS[k])));
+  try { localStorage.setItem("seestarSettings", JSON.stringify(diff)); } catch (e) {}
 }
 const allTargets = () => CATALOG.concat(custom);
 const byName = n => allTargets().find(t => t.name === n);
