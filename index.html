@@ -40,6 +40,7 @@ button.primary{background:var(--red);border-color:var(--red);color:#fff}
 button:hover{border-color:var(--muted)}
 .fig{position:relative;height:min(62vh,560px);min-height:380px;margin:4px 0 8px}
 #monthFig{height:min(80vh,760px);min-height:560px}
+#yearFig{height:min(88vh,820px);min-height:620px}
 .note{font-size:14px;color:var(--muted);margin:4px 0}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 .chip{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 6px 0 12px;border-radius:18px;background:var(--chip);font-size:14px;font-weight:500}
@@ -63,7 +64,7 @@ details.panel summary{cursor:pointer;font-weight:600;min-height:44px;display:fle
 footer{border-top:1px solid var(--rule);color:var(--muted);font-size:13px}
 footer a{color:var(--ink)}
 [hidden]{display:none!important}
-@media(max-width:700px){.grid2{grid-template-columns:minmax(0,1fr)}.fig{height:440px}#monthFig{height:680px}}
+@media(max-width:700px){.grid2{grid-template-columns:minmax(0,1fr)}.fig{height:440px}#monthFig{height:680px}#yearFig{height:720px}}
 @media(max-width:600px){table{font-size:13px}th,td{padding:6px 5px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -72,7 +73,7 @@ footer a{color:var(--ink)}
 <header class="band"><div class="wrap top">
   <div><h1>Seestar Night Planner</h1>
   <div class="site">Observing from <b id="siteName"></b> · <span id="siteCoords"></span></div></div>
-  <nav class="tabs" aria-label="Views"><a href="#month" id="tabMonth">Month</a><a href="#night" id="tabNight">Night</a></nav>
+  <nav class="tabs" aria-label="Views"><a href="#month" id="tabMonth">Month</a><a href="#night" id="tabNight">Night</a><a href="#year" id="tabYear">Year</a></nav>
 </div></header>
 
 <main>
@@ -113,6 +114,20 @@ footer a{color:var(--ink)}
   </details>
 </div></section>
 
+<section class="band" id="viewYear" hidden><div class="wrap">
+  <div class="bar">
+    <label for="yearStart">Year starting<input id="yearStart" type="month"></label>
+    <label for="yearAdd">Add target<input id="yearAdd" list="targetList" placeholder="type to search, e.g. M81" autocomplete="off"></label>
+    <label for="yearMap">Height map for<select id="yearMap"></select></label>
+    <button id="yearClear" type="button">Clear</button>
+    <span class="status" id="yearStatus" role="status"></span>
+  </div>
+  <div class="chips" id="yearChips"></div>
+  <p class="note" id="yearNote"></p>
+  <div class="fig" id="yearFig"></div>
+  <p class="note">Top: the target's altitude through each night of the year, shown only during darkness; the red line marks your horizon, the dashed line your session end. Middle: its highest altitude in darkness. Bottom: usable hours above your horizon before the session ends. Click any point to open that night.</p>
+</div></section>
+
 <section class="band"><div class="wrap">
   <div class="share"><button id="shareBtn" type="button">Copy share link</button><input id="shareUrl" readonly aria-label="Share link"></div>
   <details class="panel" id="settingsPanel"><summary>Site, darkness and tree horizon</summary>
@@ -135,12 +150,12 @@ footer a{color:var(--ink)}
 </main>
 
 <footer class="band"><div class="wrap">
-  <p>How “best month” works: for each night, time above your horizon between full darkness and the session end, weighted by 1/airmass; a target is listed in the month window where that is highest. Each window is the month plus the first days of the next. Target altitudes use J2000 positions precessed to date (no refraction, good to about 0.1°).</p>
+  <p>Views: Month lists targets at their best in each window; Night is a Staralt-style plot for one date; Year shows one target's height through every night of the year. How “best month” works: for each night, time above your horizon between full darkness and the session end, weighted by 1/airmass; a target is listed in the month window where that is highest. Each window is the month plus the first days of the next. Target altitudes use J2000 positions precessed to date (no refraction, good to about 0.1°).</p>
   <p>Sun and Moon: <a href="https://github.com/cosinekitty/astronomy">Astronomy Engine</a> (MIT). Charts: <a href="https://plotly.com/javascript/">Plotly.js</a> (MIT). Target positions: <a href="https://github.com/mattiaverga/OpenNGC">OpenNGC</a> (CC-BY-SA 4.0). Planning aid only; check against your telescope's own catalog.</p>
 </div></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
-<script src="https://cdn.plot.ly/plotly-basic-2.35.2.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-cartesian-2.35.2.min.js"></script>
 <script src="planner-core.js"></script>
 <script>
 {
@@ -149,7 +164,7 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt = (x, d = 0) => isFinite(x) ? Number(x).toFixed(d) : "–";
 
-let CATALOG = [], custom = [], settings = { ...P.DEFAULTS }, selected = [], season = null, seasonKey = "", monthCache = null;
+let CATALOG = [], custom = [], settings = { ...P.DEFAULTS }, selected = [], yearSel = ["M42_RunningMan", "M81_M82", "NGC253"], yearMapName = "", season = null, seasonKey = "", monthCache = null;
 
 /* ---------- theme-aware colours for Plotly ---------- */
 function isDark() {
@@ -178,6 +193,9 @@ function readURL() {
     .map(([n, r, d]) => ({ name: n.slice(0, 40), ra: P.parseRA(r), dec: P.parseDec(d), type: "custom", raText: r, decText: d }))
     .filter(t => isFinite(t.ra) && isFinite(t.dec));
   if (q.has("t")) selected = q.get("t").split(",").filter(Boolean);
+  if (q.has("yt")) yearSel = q.get("yt").split(",").filter(Boolean);
+  if (q.has("ym")) yearMapName = q.get("ym");
+  if (q.has("y") && /^\d{4}-\d{2}$/.test(q.get("y"))) $("yearStart").value = q.get("y");
   if (q.has("d")) $("nightDate").value = q.get("d");
   return q;
 }
@@ -187,6 +205,7 @@ function writeURL() {
   if (settings.horizon.length) q.set("hz", settings.horizon.map(p => p.join(":")).join(","));
   if (custom.length) q.set("c", custom.map(t => [t.name, t.raText, t.decText].join("~")).join("|"));
   if (view() === "night") { q.set("d", $("nightDate").value); if (selected.length) q.set("t", selected.join(",")); }
+  else if (view() === "year") { q.set("y", $("yearStart").value); if (yearSel.length) q.set("yt", yearSel.join(",")); if (yearMapName) q.set("ym", yearMapName); }
   else q.set("w", $("winSel").value);
   const url = location.pathname + (q.toString() ? "?" + q : "") + location.hash;
   try { history.replaceState(null, "", url); } catch (e) {}
@@ -207,13 +226,14 @@ function tonight() {
 const thisMonth = () => tonight().slice(0, 7);
 
 /* ---------- views ---------- */
-const view = () => (location.hash === "#night" ? "night" : "month");
+const view = () => (location.hash === "#night" ? "night" : location.hash === "#year" ? "year" : "month");
 function route() {
   const v = view();
-  $("viewMonth").hidden = v !== "month"; $("viewNight").hidden = v !== "night";
+  $("viewMonth").hidden = v !== "month"; $("viewNight").hidden = v !== "night"; $("viewYear").hidden = v !== "year";
+  $("tabYear").setAttribute("aria-current", v === "year" ? "page" : "false");
   $("tabMonth").setAttribute("aria-current", v === "month" ? "page" : "false");
   $("tabNight").setAttribute("aria-current", v === "night" ? "page" : "false");
-  v === "month" ? renderMonth() : renderNight();
+  v === "month" ? renderMonth() : v === "night" ? renderNight() : renderYear();
 }
 
 /* ---------- season assignment (cached) ---------- */
@@ -377,6 +397,74 @@ function renderNight() {
   });
 }
 
+/* ---------- year view ---------- */
+function renderYear() {
+  if (!$("yearStart").value) $("yearStart").value = thisMonth();
+  busy("yearStatus", "Computing the year…", () => {
+    const c = pal();
+    yearSel = yearSel.filter(n => byName(n));
+    $("yearChips").innerHTML = yearSel.map((n, k) => `<span class="chip"><i style="background:${c.s[k % c.s.length]}"></i>${esc(n)}<button type="button" data-rm="${esc(n)}" aria-label="Remove ${esc(n)}">×</button></span>`).join("");
+    if (!yearSel.includes(yearMapName)) yearMapName = yearSel[0] || "";
+    $("yearMap").innerHTML = yearSel.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join("");
+    $("yearMap").value = yearMapName;
+    const first = $("yearStart").value + "-01", dates = P.dateRange(first, P.dateAdd(first, 364));
+    const tg = yearSel.map(byName);
+    if (!tg.length) { Plotly.purge("yearFig"); $("yearNote").textContent = "Add a target to see its year."; writeURL(); return; }
+    const C = P.computeNights(tg, dates, settings, 10), S = C.offs.length, x = dates.map((_, i) => i);
+    const stats = tg.map((_, k) => dates.map((_, n) => P.nightStats(C, k, n)));
+    const mk = tg.findIndex(t => t.name === yearMapName);
+    const hrs = Array.from(C.offs, h => h + P.GRID_START);
+    const z = [], zc = [], hov = [];
+    for (let s = 0; s < S; s++) {
+      const row = [], rc = [], rh = [];
+      for (let n = 0; n < dates.length; n++) {
+        const N = C.nights[n], a = N.alt[mk][s];
+        row.push(N.dark[s] && a > 0 ? a : null);
+        rc.push(N.dark[s] ? a - N.lim[mk][s] : null);
+        rh.push(`${dates[n]} ${P.clock(C.offs[s])}<br>${esc(yearMapName)} alt ${a.toFixed(0)}° ${P.compass(N.az[mk][s])}`);
+      }
+      z.push(row); zc.push(rc); hov.push(rh);
+    }
+    const traces = [
+      { type: "heatmap", x, y: hrs, z, text: hov, hoverinfo: "text", zmin: 0, zmax: 90, xaxis: "x", yaxis: "y",
+        colorscale: [[0, "#1d2b53"], [.25, "#2b5c8a"], [.5, "#2f9c95"], [.75, "#a9d26b"], [1, "#fde725"]],
+        colorbar: { title: { text: "alt °", side: "top" }, len: .5, y: 1, yanchor: "top", thickness: 12, tickfont: { color: c.muted }, titlefont: { color: c.muted } }, customdata: dates },
+      { type: "contour", x, y: hrs, z: zc, xaxis: "x", yaxis: "y", showscale: false, showlegend: false, hoverinfo: "skip", contours: { start: 0, end: 0, size: 1, coloring: "none" }, line: { color: c.red, width: 2 }, connectgaps: false },
+    ];
+    tg.forEach((t, k) => {
+      const col = c.s[k % c.s.length], st = stats[k];
+      const txt = st.map((s, n) => `${esc(t.name)} ${dates[n]}<br>max ${fmt(s.maxAlt)}° at ${P.clock(s.best)} · usable ${fmt(s.usableSession, 1)} h`);
+      traces.push({ x, y: st.map(s => s.usableNight > 0 ? s.maxAlt : null), xaxis: "x", yaxis: "y2", name: t.name, legendgroup: t.name, mode: "lines", line: { color: col, width: 2.5 }, text: txt, hoverinfo: "text" });
+      traces.push({ x, y: st.map(s => s.maxAlt > 0 ? s.maxAlt : null), xaxis: "x", yaxis: "y2", legendgroup: t.name, showlegend: false, mode: "lines", line: { color: col, width: 1 }, opacity: .35, hoverinfo: "skip" });
+      traces.push({ x, y: st.map(s => s.usableSession), xaxis: "x", yaxis: "y3", legendgroup: t.name, showlegend: false, mode: "lines", line: { color: col, width: 2 }, text: txt, hoverinfo: "text" });
+    });
+    const se = P.parseClock(settings.sessionEnd) + P.GRID_START;
+    const shapes = [{ type: "line", xref: "paper", yref: "y", x0: 0, x1: 1, y0: se, y1: se, line: { color: c.ink, width: 1.2, dash: "dash" } }];
+    if (!settings.horizon.length) shapes.push({ type: "line", xref: "paper", yref: "y2", x0: 0, x1: 1, y0: settings.minAlt, y1: settings.minAlt, line: { color: c.muted, width: 1, dash: "dash" } });
+    const mStart = dates.map((d, i) => [d, i]).filter(([d]) => d.endsWith("-01"));
+    const narrow = $("yearFig").clientWidth < 560;
+    const ax = { gridcolor: c.grid, zerolinecolor: c.grid, color: c.muted, tickfont: { size: 12 } };
+    const ht = []; for (let h = 18; h <= 31; h += narrow ? 2 : 1) ht.push(h);
+    Plotly.react("yearFig", traces, {
+      paper_bgcolor: c.bg, plot_bgcolor: c.bg, font: { family: "Inter, sans-serif", color: c.ink, size: 13 },
+      width: $("yearFig").clientWidth, height: $("yearFig").clientHeight,
+      margin: { l: 60, r: narrow ? 12 : 70, t: 20, b: 40 }, shapes, hovermode: "closest",
+      legend: narrow ? { orientation: "h", y: -0.06 } : { x: 1.01, y: .44 },
+      xaxis: { ...ax, anchor: "y3", range: [-.5, dates.length - .5], tickvals: mStart.map(m => m[1]), ticktext: mStart.map(([d]) => new Date(d + "T12:00Z").toLocaleString("en-US", { month: "short", timeZone: "UTC" }) + (d.slice(5, 7) === "01" ? " " + d.slice(0, 4) : "")) },
+      yaxis: { ...ax, domain: [.47, 1], range: [P.GRID_START + P.GRID_HOURS, P.GRID_START], tickvals: ht, ticktext: ht.map(h => String(h % 24).padStart(2, "0") + ":00"), title: { text: "Local time", font: { size: 13 } } },
+      yaxis2: { ...ax, domain: [.22, .43], range: [0, 90], tickvals: [0, 30, 60, 90], title: { text: "Max alt (°)", font: { size: 13 } } },
+      yaxis3: { ...ax, domain: [0, .18], rangemode: "tozero", title: { text: "Usable h", font: { size: 13 } } },
+    }, { displaylogo: false, responsive: true, modeBarButtonsToRemove: ["lasso2d", "select2d"] });
+    $("yearFig").removeAllListeners?.("plotly_click");
+    $("yearFig").on("plotly_click", e => { const i = Math.round(e.points[0]?.x); if (isFinite(i) && dates[i]) openNight(dates[i], yearSel); });
+    const pk = stats[mk].reduce((b, s, n) => s.score > b[0] ? [s.score, n] : b, [-1, 0]);
+    $("yearNote").textContent = pk[0] > 0
+      ? `${yearMapName} is best placed around ${dates[pk[1]]}: highest at ${P.clock(stats[mk][pk[1]].best)}, ${fmt(stats[mk][pk[1]].maxAlt)}° up.`
+      : `${yearMapName} never clears your horizon during darkness this year.`;
+    writeURL();
+  });
+}
+
 function bestTonight(date, n) {
   const T = allTargets(), C = P.computeNights(T, [date], settings, 10);
   return T.map((t, k) => [t.name, P.nightStats(C, k, 0)]).filter(([, s]) => s.usableNight > 0)
@@ -425,9 +513,15 @@ $("customForm").addEventListener("submit", e => {
   refreshTargetList(); selected = selected.filter(n => n !== "__none__").concat(name); season = null; e.target.reset(); renderNight();
 });
 $("shareBtn").addEventListener("click", async () => { writeURL(); try { await navigator.clipboard.writeText($("shareUrl").value); $("shareBtn").textContent = "Link copied"; } catch (e) { $("shareUrl").select(); } setTimeout(() => $("shareBtn").textContent = "Copy share link", 1800); });
+$("yearStart").addEventListener("change", renderYear);
+$("yearMap").addEventListener("change", () => { yearMapName = $("yearMap").value; renderYear(); });
+$("yearAdd").addEventListener("change", () => { const n = $("yearAdd").value.trim(); const t = byName(n) || allTargets().find(x => x.name.toLowerCase().includes(n.toLowerCase()));
+  if (t && !yearSel.includes(t.name)) { yearSel.push(t.name); yearMapName = t.name; renderYear(); } $("yearAdd").value = ""; });
+$("yearChips").addEventListener("click", e => { const n = e.target.dataset?.rm; if (n) { yearSel = yearSel.filter(x => x !== n); renderYear(); } });
+$("yearClear").addEventListener("click", () => { yearSel = []; renderYear(); });
 addEventListener("hashchange", route);
-let rsz; const figRO = new ResizeObserver(() => { clearTimeout(rsz); rsz = setTimeout(() => { for (const id of ["monthFig", "nightFig"]) { const el = $(id); if (el.data && el.clientWidth) Plotly.relayout(el, { width: el.clientWidth, height: el.clientHeight }); } }, 150); });
-figRO.observe($("monthFig")); figRO.observe($("nightFig"));
+let rsz; const figRO = new ResizeObserver(() => { clearTimeout(rsz); rsz = setTimeout(() => { for (const id of ["monthFig", "nightFig", "yearFig"]) { const el = $(id); if (el.data && el.clientWidth) Plotly.relayout(el, { width: el.clientWidth, height: el.clientHeight }); } }, 150); });
+figRO.observe($("monthFig")); figRO.observe($("nightFig")); figRO.observe($("yearFig"));
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", route);
 new MutationObserver(route).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
