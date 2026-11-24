@@ -8,8 +8,8 @@
   const GRID_START = 17, GRID_HOURS = 14, SIDEREAL = 1.00273790935;
 
   const DEFAULTS = {
-    siteName: "McClintock High School, Tempe AZ",
-    lat: 33.3981, lon: -111.9069, elev: 360, utc: -7,
+    siteName: "Tempe Town Lake, Tempe AZ",
+    lat: 33.4322, lon: -111.9319, elev: 350, utc: -7,
     minAlt: 15, twilight: -18, sessionEnd: "03:00", overlap: 15, refTime: "21:00",
     horizon: [] // [[az, alt], ...]
   };
