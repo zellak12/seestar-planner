@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seestar Night Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE everyday tool for a backyard observer; dense, ordered, calm
+   IDEA an observer's night log sheet read under a red torch
+   PICTURE the altitude-vs-time chart (night) and altitude-vs-date chart (month), drawn large
+   COLOUR night ground, starlight ink, red-torch accent; same idea on paper in light theme
+   TYPE Jost 600 (mid-century space-age lettering) + Inter
+   LAYOUT title row with view switch; chart full width; controls and table below; stacks on phones */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#0f1218);--panel:light-dark(#f4f3f0,#171b23);--ink:light-dark(#15181d,#e8e6e1);--muted:light-dark(#5b6472,#9aa3b2);--rule:light-dark(#dcd9d3,#2a303b);--red:light-dark(#c92a1a,#ff5a4e);--chip:light-dark(#ebe9e4,#20252f)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+.band{padding:20px max(4vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+header.band{border-bottom:1px solid var(--rule);padding-block:18px 14px}
+.top{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px 24px}
+h1{font:600 clamp(30px,4vw,44px)/1.05 Jost,Inter,sans-serif;letter-spacing:-.02em;margin:0}
+h2{font:600 22px/1.2 Jost,Inter,sans-serif;margin:0 0 4px}
+.site{color:var(--muted);font-size:15px;margin-top:4px}
+.site b{color:var(--ink);font-weight:600}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs a{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:22px;border:1px solid var(--rule);color:var(--ink);text-decoration:none;font-weight:600}
+.tabs a[aria-current=page]{background:var(--red);border-color:var(--red);color:#fff}
+.tabs a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.bar{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:end;margin:14px 0 6px}
+label{display:flex;flex-direction:column;font-size:13px;color:var(--muted);gap:4px}
+input,select,textarea{font:16px Inter,system-ui,sans-serif;color:var(--ink);background:var(--bg);border:1px solid var(--rule);border-radius:8px;padding:9px 10px;min-height:44px}
+textarea{min-height:120px;width:100%;font-family:ui-monospace,Menlo,monospace;font-size:14px}
+button{font:600 15px Inter,system-ui,sans-serif;min-height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--rule);background:var(--panel);color:var(--ink);cursor:pointer}
+button.primary{background:var(--red);border-color:var(--red);color:#fff}
+button:hover{border-color:var(--muted)}
+.fig{position:relative;height:min(62vh,560px);min-height:380px;margin:4px 0 8px}
+#monthFig{height:min(80vh,760px);min-height:560px}
+.note{font-size:14px;color:var(--muted);margin:4px 0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chip{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 6px 0 12px;border-radius:18px;background:var(--chip);font-size:14px;font-weight:500}
+.chip i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.chip button{min-height:30px;height:30px;width:30px;padding:0;border-radius:15px;border:0;background:transparent;font-size:18px;line-height:1}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--rule);text-align:right;white-space:nowrap}
+th{font-weight:600;color:var(--muted);font-size:13px}
+th:first-child,td:first-child{text-align:left}
+td.n{font-variant-numeric:tabular-nums}
+tr.click{cursor:pointer}
+tr.click:hover td{background:var(--panel)}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+details.panel{background:var(--panel);border:1px solid var(--rule);border-radius:12px;padding:6px 16px;margin:16px 0}
+details.panel summary{cursor:pointer;font-weight:600;min-height:44px;display:flex;align-items:center}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:8px 0 12px}
+.status{min-height:24px;font-size:14px;color:var(--red);font-weight:500}
+.share{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.share input{flex:1 1 260px}
+footer{border-top:1px solid var(--rule);color:var(--muted);font-size:13px}
+footer a{color:var(--ink)}
+[hidden]{display:none!important}
+@media(max-width:700px){.grid2{grid-template-columns:minmax(0,1fr)}.fig{height:440px}#monthFig{height:680px}}
+@media(max-width:600px){table{font-size:13px}th,td{padding:6px 5px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="band"><div class="wrap top">
+  <div><h1>Seestar Night Planner</h1>
+  <div class="site">Observing from <b id="siteName"></b> · <span id="siteCoords"></span></div></div>
+  <nav class="tabs" aria-label="Views"><a href="#month" id="tabMonth">Month</a><a href="#night" id="tabNight">Night</a></nav>
+</div></header>
+
+<main>
+<section class="band" id="viewMonth"><div class="wrap">
+  <div class="bar">
+    <label for="winSel">Month window<select id="winSel"></select></label>
+    <label for="refTime">Altitude at<input id="refTime" type="time" step="900"></label>
+    <button id="csvDl" type="button">Download CSV</button>
+    <button id="csvCopy" type="button">Copy CSV</button>
+    <span class="status" id="monthStatus" role="status"></span>
+  </div>
+  <p class="note" id="monthNote"></p>
+  <div class="fig" id="monthFig"></div>
+  <h2>Targets at their best in this window</h2>
+  <p class="note">Click a row, or a point on the chart, to open that night.</p>
+  <div class="scroll"><table id="monthTable"><thead><tr><th>Target</th><th>Type</th><th>Best time (mid)</th><th>Peak alt</th><th>Usable h (mid)</th><th>Darkest good night</th></tr></thead><tbody></tbody></table></div>
+</div></section>
+
+<section class="band" id="viewNight" hidden><div class="wrap">
+  <div class="bar">
+    <label for="nightDate">Evening of<input id="nightDate" type="date"></label>
+    <label for="addTarget">Add target<input id="addTarget" list="targetList" placeholder="type to search, e.g. Rosette" autocomplete="off"></label>
+    <datalist id="targetList"></datalist>
+    <button id="bestTonight" type="button" class="primary">Best 8 tonight</button>
+    <button id="clearTargets" type="button">Clear</button>
+    <span class="status" id="nightStatus" role="status"></span>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div class="fig" id="nightFig"></div>
+  <div class="scroll"><table id="nightTable"><thead><tr><th>Target</th><th>Transit</th><th>Best</th><th>Max alt</th><th>Airmass</th><th>Dir</th><th>Trees</th><th>Usable window</th><th>Hours</th><th>Moon sep</th></tr></thead><tbody></tbody></table></div>
+  <details class="panel"><summary>Add a custom target (RA/Dec)</summary>
+    <form id="customForm" class="form">
+      <label for="cName">Name<input id="cName" required placeholder="Thor"></label>
+      <label for="cRA">RA (hh:mm:ss or deg)<input id="cRA" required placeholder="07:18:30"></label>
+      <label for="cDec">Dec (±dd:mm:ss or deg)<input id="cDec" required placeholder="-13:13:48"></label>
+      <button type="submit" class="primary" style="align-self:end">Add</button>
+    </form>
+  </details>
+</div></section>
+
+<section class="band"><div class="wrap">
+  <div class="share"><button id="shareBtn" type="button">Copy share link</button><input id="shareUrl" readonly aria-label="Share link"></div>
+  <details class="panel" id="settingsPanel"><summary>Site, darkness and tree horizon</summary>
+    <form id="settingsForm">
+      <div class="form">
+        <label for="sName">Site name<input id="sName"></label>
+        <label for="sLat">Latitude (°N)<input id="sLat" type="number" step="0.0001"></label>
+        <label for="sLon">Longitude (°E, west negative)<input id="sLon" type="number" step="0.0001"></label>
+        <label for="sUtc">UTC offset (h)<input id="sUtc" type="number" step="0.5"></label>
+        <label for="sMin">Minimum altitude (°)<input id="sMin" type="number" step="1"></label>
+        <label for="sTw">Darkness<select id="sTw"><option value="-18">Astronomical (sun &lt; −18°)</option><option value="-12">Nautical (sun &lt; −12°)</option></select></label>
+        <label for="sEnd">Session ends<input id="sEnd" type="time" step="900"></label>
+        <label for="sOv">Days into next month<input id="sOv" type="number" min="0" max="31"></label>
+      </div>
+      <label for="sHz">Tree horizon: one "azimuth,altitude" per line (0 = N, 90 = E, 180 = S). Leave empty for a flat minimum altitude.<textarea id="sHz" placeholder="0,15&#10;90,20&#10;160,30&#10;200,25&#10;270,15"></textarea></label>
+      <div class="bar"><button class="primary" type="submit">Apply</button><button type="button" id="resetBtn">Reset to defaults</button></div>
+    </form>
+  </details>
+</div></section>
+</main>
+
+<footer class="band"><div class="wrap">
+  <p>How “best month” works: for each night, time above your horizon between full darkness and the session end, weighted by 1/airmass; a target is listed in the month window where that is highest. Each window is the month plus the first days of the next. Target altitudes use J2000 positions precessed to date (no refraction, good to about 0.1°).</p>
+  <p>Sun and Moon: <a href="https://github.com/cosinekitty/astronomy">Astronomy Engine</a> (MIT). Charts: <a href="https://plotly.com/javascript/">Plotly.js</a> (MIT). Target positions: <a href="https://github.com/mattiaverga/OpenNGC">OpenNGC</a> (CC-BY-SA 4.0). Planning aid only; check against your telescope's own catalog.</p>
+</div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-basic-2.35.2.min.js"></script>
+<script src="planner-core.js"></script>
+<script>
+{
+const P = window.Planner;
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = (x, d = 0) => isFinite(x) ? Number(x).toFixed(d) : "–";
+
+let CATALOG = [], custom = [], settings = { ...P.DEFAULTS }, selected = [], season = null, seasonKey = "", monthCache = null;
+
+/* ---------- theme-aware colours for Plotly ---------- */
+function isDark() {
+  const t = document.documentElement.dataset.theme;
+  return t ? t === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+}
+function pal() {
+  return isDark()
+    ? { bg: "#0f1218", ink: "#e8e6e1", muted: "#9aa3b2", grid: "#2a303b", red: "#ff5a4e", moon: "#d8d2bd",
+        day: "#3a3f4a", civil: "#2c313b", naut: "#222731", astro: "#1a1e26",
+        s: ["#4ea8de", "#ff5a4e", "#f2b134", "#59c48b", "#b48ef0", "#ef7fb8", "#46c6c6", "#d9d065", "#9db1ff", "#ff9a5c", "#8fd3a8", "#e0a0ff"] }
+    : { bg: "#ffffff", ink: "#15181d", muted: "#5b6472", grid: "#e4e1db", red: "#c92a1a", moon: "#6b6450",
+        day: "#d6d3cc", civil: "#e2e0da", naut: "#eceae5", astro: "#f6f5f2",
+        s: ["#1f6fb4", "#c92a1a", "#b77c00", "#2f8f57", "#7b52c7", "#c2457f", "#178a90", "#7d7816", "#4a5fd0", "#d0601f", "#3f8a5f", "#9b3fc0"] };
+}
+
+/* ---------- state <-> URL ---------- */
+const SKEYS = { lat: "lat", lon: "lon", utc: "utc", minAlt: "min", twilight: "tw", sessionEnd: "se", overlap: "ov", refTime: "rt", siteName: "site" };
+function readURL() {
+  const q = new URLSearchParams(location.search);
+  for (const [k, p] of Object.entries(SKEYS)) if (q.has(p)) {
+    const v = q.get(p); settings[k] = typeof P.DEFAULTS[k] === "number" ? Number(v) : v;
+  }
+  if (q.has("hz")) settings.horizon = q.get("hz").split(",").map(s => s.split(":").map(Number)).filter(p => p.length === 2 && p.every(isFinite));
+  if (q.has("c")) custom = q.get("c").split("|").map(s => s.split("~")).filter(p => p.length === 3)
+    .map(([n, r, d]) => ({ name: n.slice(0, 40), ra: P.parseRA(r), dec: P.parseDec(d), type: "custom", raText: r, decText: d }))
+    .filter(t => isFinite(t.ra) && isFinite(t.dec));
+  if (q.has("t")) selected = q.get("t").split(",").filter(Boolean);
+  if (q.has("d")) $("nightDate").value = q.get("d");
+  return q;
+}
+function writeURL() {
+  const q = new URLSearchParams();
+  for (const [k, p] of Object.entries(SKEYS)) if (settings[k] !== P.DEFAULTS[k]) q.set(p, settings[k]);
+  if (settings.horizon.length) q.set("hz", settings.horizon.map(p => p.join(":")).join(","));
+  if (custom.length) q.set("c", custom.map(t => [t.name, t.raText, t.decText].join("~")).join("|"));
+  if (view() === "night") { q.set("d", $("nightDate").value); if (selected.length) q.set("t", selected.join(",")); }
+  else q.set("w", $("winSel").value);
+  const url = location.pathname + (q.toString() ? "?" + q : "") + location.hash;
+  try { history.replaceState(null, "", url); } catch (e) {}
+  $("shareUrl").value = location.origin + url;
+  try { localStorage.setItem("seestarSettings", JSON.stringify(settings)); } catch (e) {}
+}
+const allTargets = () => CATALOG.concat(custom);
+const byName = n => allTargets().find(t => t.name === n);
+
+/* ---------- dates in site time ---------- */
+function tonight() {
+  const now = new Date(Date.now() + settings.utc * 3600e3);
+  if (now.getUTCHours() < 7) now.setUTCDate(now.getUTCDate() - 1);
+  return now.toISOString().slice(0, 10);
+}
+const thisMonth = () => tonight().slice(0, 7);
+
+/* ---------- views ---------- */
+const view = () => (location.hash === "#night" ? "night" : "month");
+function route() {
+  const v = view();
+  $("viewMonth").hidden = v !== "month"; $("viewNight").hidden = v !== "night";
+  $("tabMonth").setAttribute("aria-current", v === "month" ? "page" : "false");
+  $("tabNight").setAttribute("aria-current", v === "night" ? "page" : "false");
+  v === "month" ? renderMonth() : renderNight();
+}
+
+/* ---------- season assignment (cached) ---------- */
+function ensureSeason() {
+  const key = JSON.stringify([settings, custom.map(t => t.name), thisMonth()]);
+  if (season && key === seasonKey) return season;
+  season = P.assignSeason(allTargets(), settings, thisMonth(), 12);
+  seasonKey = key; monthCache = null;
+  const sel = $("winSel"), cur = sel.value;
+  sel.innerHTML = season.windows.map(w => `<option value="${w.key}">${new Date(Date.UTC(w.year, w.month - 1, 1)).toLocaleString("en-US", { month: "long", year: "numeric", timeZone: "UTC" })} + ${settings.overlap} days</option>`).join("");
+  sel.value = season.windows.some(w => w.key === cur) ? cur : season.windows[0].key;
+  return season;
+}
+
+function busy(el, msg, fn) {
+  $(el).textContent = msg;
+  setTimeout(() => { try { fn(); $(el).textContent = ""; } catch (e) { $(el).textContent = "Error: " + e.message; console.error(e); } }, 30);
+}
+
+/* ---------- month view ---------- */
+function monthData() {
+  const S = ensureSeason(), wkey = $("winSel").value;
+  if (monthCache && monthCache.key === wkey + settings.refTime) return monthCache;
+  const w = S.windows.find(x => x.key === wkey);
+  const tg = allTargets().filter(t => S.best[t.name] === wkey);
+  const dates = P.dateRange(w.first, w.last);
+  const C = tg.length ? P.computeNights(tg, dates, settings, 10) : null;
+  let stats = C ? tg.map((_, k) => dates.map((_, n) => P.nightStats(C, k, n))) : [];
+  // order targets by their best time mid-window (earliest first); keep C's target index for lookups
+  const mid = Math.floor(dates.length / 2);
+  const order = tg.map((_, k) => k).sort((a, b) => stats[a][mid].best - stats[b][mid].best);
+  monthCache = { key: wkey + settings.refTime, w, tg: order.map(k => tg[k]), idx: order, dates, C, stats: order.map(k => stats[k]) };
+  return monthCache;
+}
+
+function renderMonth() {
+  busy("monthStatus", "Computing the season…", () => {
+    const M = monthData(), c = pal();
+    $("monthNote").textContent = `${M.w.first} to ${M.w.last}. ${M.tg.length} targets peak in this window` +
+      (season.never.length ? `; never above your horizon: ${season.never.join(", ")}.` : ".");
+    const ref = P.parseClock(settings.refTime);
+    const traces = [], shapes = [], ann = [];
+    const x = M.dates.map((_, i) => i), xt = M.dates.map(d => d.slice(5));
+    M.tg.forEach((t, k) => {
+      const st = M.stats[k], col = c.s[k % c.s.length];
+      const iref = M.C ? Math.round(ref * 60 / M.C.stepMin) : 0;
+      const ci = M.idx[k];
+      const y = M.C.nights.map(N => N.alt[ci][iref]);
+      const ok = M.C.nights.map(N => N.alt[ci][iref] > N.lim[ci][iref]);
+      const hov = st.map((s, n) => `${esc(t.name)}<br>${M.dates[n]}<br>best ${P.clock(s.best)} · max ${fmt(s.maxAlt)}°<br>usable ${fmt(s.usableSession, 1)} h · Moon ${fmt(s.moonSep)}° away`);
+      traces.push({ x, y: y.map((v, i) => ok[i] ? v : null), name: t.name, legendgroup: t.name, mode: "lines+markers", line: { color: col, width: 2.5 }, marker: { size: 5 }, text: hov, hoverinfo: "text", customdata: M.dates.map(d => [d, t.name]) });
+      traces.push({ x, y: y.map(v => v > 0 ? v : null), legendgroup: t.name, showlegend: false, mode: "lines", line: { color: col, width: 1 }, opacity: .35, hoverinfo: "skip" });
+      traces.push({ x, y: st.map(s => s.best + P.GRID_START), xaxis: "x", yaxis: "y2", legendgroup: t.name, showlegend: false, mode: "lines", line: { color: col, width: 2 }, text: hov, hoverinfo: "text", customdata: M.dates.map(d => [d, t.name]) });
+      traces.push({ x, y: st.map(s => s.moonSep), xaxis: "x", yaxis: "y3", legendgroup: t.name, showlegend: false, mode: "lines", line: { color: col, width: 1.6 }, text: hov, hoverinfo: "text", customdata: M.dates.map(d => [d, t.name]) });
+    });
+    const ill = M.C ? M.C.nights.map(N => N.illum) : [];
+    ill.forEach((v, i) => shapes.push({ type: "rect", xref: "x", yref: "paper", x0: i - .5, x1: i + .5, y0: 0, y1: 1, fillcolor: c.moon, opacity: .28 * v, line: { width: 0 }, layer: "below" }));
+    ill.forEach((v, i) => {
+      if (v < .06 && v <= (ill[i - 1] ?? 1) && v <= (ill[i + 1] ?? 1)) ann.push({ x: i, y: 1.02, xref: "x", yref: "paper", text: "new Moon", showarrow: false, font: { size: 12, color: c.muted } });
+      if (v > .94 && v >= (ill[i - 1] ?? 0) && v >= (ill[i + 1] ?? 0)) ann.push({ x: i, y: 1.02, xref: "x", yref: "paper", text: "full Moon", showarrow: false, font: { size: 12, color: c.muted } });
+    });
+    const nx = M.dates.findIndex(d => Number(d.slice(5, 7)) !== M.w.month);
+    if (nx > 0) { shapes.push({ type: "line", xref: "x", yref: "paper", x0: nx - .5, x1: nx - .5, y0: 0, y1: 1, line: { color: c.muted, width: 1.2 } });
+      ann.push({ x: nx - .3, y: .445, xref: "x", yref: "paper", text: "next month →", showarrow: false, xanchor: "left", font: { size: 12, color: c.muted } }); }
+    if (!settings.horizon.length) shapes.push({ type: "line", xref: "paper", yref: "y", x0: 0, x1: 1, y0: settings.minAlt, y1: settings.minAlt, line: { color: c.muted, width: 1, dash: "dash" } });
+    const se = P.parseClock(settings.sessionEnd) + P.GRID_START, hrs = [];
+    for (let h = 18; h <= Math.ceil(se); h++) hrs.push(h);
+    const narrow = $("monthFig").clientWidth < 560;
+    const ax = { gridcolor: c.grid, zerolinecolor: c.grid, color: c.muted, tickfont: { size: 12 } };
+    const layout = {
+      paper_bgcolor: c.bg, plot_bgcolor: c.bg, font: { family: "Inter, sans-serif", color: c.ink, size: 13 },
+      width: $("monthFig").clientWidth, height: $("monthFig").clientHeight,
+      margin: { l: 60, r: 12, t: 30, b: 60 }, showlegend: true, hovermode: "closest", shapes, annotations: ann,
+      legend: narrow ? { orientation: "h", y: -0.16 } : { x: 1.01, y: .97 },
+      xaxis: { ...ax, anchor: "y3", tickvals: x.filter(i => i % (narrow ? 4 : 2) === 0), ticktext: xt.filter((_, i) => i % (narrow ? 4 : 2) === 0), tickangle: -90, range: [-.5, x.length - .5] },
+      yaxis: { ...ax, domain: [.47, 1], range: [0, 90], title: { text: `Altitude at ${settings.refTime} (°)`, font: { size: 13 } } },
+      yaxis2: { ...ax, domain: [.2, .43], range: [se + .4, 17.6], tickvals: hrs, ticktext: hrs.map(h => String(h % 24).padStart(2, "0") + ":00"), title: { text: "Best time", font: { size: 13 } } },
+      yaxis3: { ...ax, domain: [0, .16], range: [0, 180], tickvals: [0, 90, 180], title: { text: "Moon sep (°)", font: { size: 13 } } },
+    };
+    if (!M.tg.length) layout.annotations.push({ x: .5, y: .7, xref: "paper", yref: "paper", text: "No targets peak in this window", showarrow: false, font: { size: 16, color: c.muted } });
+    Plotly.react("monthFig", traces, layout, { displaylogo: false, responsive: true, modeBarButtonsToRemove: ["lasso2d", "select2d"] });
+    $("monthFig").removeAllListeners?.("plotly_click");
+    $("monthFig").on("plotly_click", e => { const cd = e.points[0]?.customdata; if (cd) openNight(cd[0], [cd[1]]); });
+    // table
+    const mid = Math.floor(M.dates.length / 2);
+    $("monthTable").tBodies[0].innerHTML = M.tg.map((t, k) => {
+      const st = M.stats[k], s = st[mid];
+      let dn = -1, bestv = -1; st.forEach((x, n) => { const v = x.usableSession * (1 - x.illum); if (v > bestv) { bestv = v; dn = n; } });
+      return `<tr class="click" data-t="${esc(t.name)}" data-d="${M.dates[dn]}" tabindex="0"><td><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${c.s[k % c.s.length]};margin-right:8px"></i>${esc(t.name)}</td><td>${esc(t.type || "")}</td><td class="n">${P.clock(s.best)}</td><td class="n">${fmt(Math.max(...st.map(x => x.maxAlt)))}°</td><td class="n">${fmt(s.usableSession, 1)}</td><td class="n">${M.dates[dn]}</td></tr>`;
+    }).join("") || `<tr><td colspan="6">No targets peak in this window.</td></tr>`;
+    writeURL();
+  });
+}
+
+function toCSV() {
+  const M = monthData();
+  const cols = ["date", "target", "type", "transit", "best_time", "max_alt", "airmass", "direction", "horizon_there", "usable_start", "usable_end", "usable_h_session", "usable_h_night", "moon_illum_pct", "moon_up", "moon_sep_deg", "dark_start", "dark_end"];
+  const q = v => /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : v;
+  const rows = [cols.join(",")];
+  M.tg.forEach((t, k) => M.stats[k].forEach((s, n) => rows.push([M.dates[n], t.name, t.type || "", P.clock(s.transit), P.clock(s.best), fmt(s.maxAlt, 1), fmt(s.airmass, 2), P.compass(s.az), fmt(s.lim), P.clock(s.start), P.clock(s.end), fmt(s.usableSession, 2), fmt(s.usableNight, 2), fmt(100 * s.illum), s.moonAlt > 0 ? 1 : 0, fmt(s.moonSep), P.clock(s.darkStart), P.clock(s.darkEnd)].map(q).join(","))));
+  return rows.join("\n") + "\n";
+}
+
+/* ---------- night view ---------- */
+function openNight(date, names) {
+  $("nightDate").value = date; selected = names.slice();
+  if (location.hash === "#night") renderNight(); else location.hash = "#night";
+}
+
+function renderChips() {
+  const c = pal();
+  $("chips").innerHTML = selected.map((n, k) => `<span class="chip"><i style="background:${c.s[k % c.s.length]}"></i>${esc(n)}<button type="button" data-rm="${esc(n)}" aria-label="Remove ${esc(n)}">×</button></span>`).join("");
+}
+
+function renderNight() {
+  if (!$("nightDate").value) $("nightDate").value = tonight();
+  busy("nightStatus", "Computing…", () => {
+    const date = $("nightDate").value, c = pal();
+    if (!selected.length) selected = bestTonight(date, 8);
+    selected = selected.filter(n => byName(n));
+    renderChips();
+    const tg = selected.map(byName);
+    const C = P.computeNights(tg.length ? tg : [CATALOG[0]], [date], settings, 2);
+    const N = C.nights[0], offs = Array.from(C.offs), traces = [], shapes = [], ann = [];
+    // twilight bands
+    const band = (lo, hi, col) => { let s0 = null; offs.forEach((h, i) => { const inb = N.sunAlt[i] <= hi && N.sunAlt[i] > lo; if (inb && s0 === null) s0 = h; if ((!inb || i === offs.length - 1) && s0 !== null) { shapes.push({ type: "rect", xref: "x", yref: "paper", x0: s0, x1: h, y0: 0, y1: 1, fillcolor: col, line: { width: 0 }, layer: "below" }); s0 = null; } }); };
+    band(0, 90, c.day); band(-6, 0, c.civil); band(-12, -6, c.naut); band(settings.twilight, -12, c.astro);
+    [[-6, "civil"], [-12, "nautical"], [-18, "astronomical"]].forEach(([lv, lab]) => {
+      for (let i = 1; i < offs.length; i++) if ((N.sunAlt[i - 1] - lv) * (N.sunAlt[i] - lv) < 0)
+        ann.push({ x: offs[i], y: .99, xref: "x", yref: "paper", text: lab, textangle: -90, showarrow: false, xanchor: i < offs.length / 2 ? "right" : "left", yanchor: "top", font: { size: 11, color: c.muted } });
+    });
+    traces.push({ x: offs, y: Array.from(N.moonAlt, v => v > 0 ? v : null), name: `Moon (${fmt(100 * N.illum)}% lit)`, mode: "lines", line: { color: c.moon, dash: "dot", width: 2.5 }, hovertemplate: "Moon %{y:.0f}°<extra></extra>" });
+    const rows = [];
+    tg.forEach((t, k) => {
+      const col = c.s[k % c.s.length], a = N.alt[k], l = N.lim[k], s = P.nightStats(C, k, 0);
+      const txt = offs.map((h, i) => `${esc(t.name)} ${P.clock(h)}<br>alt ${a[i].toFixed(0)}° · airmass ${a[i] > 1 ? (1 / Math.sin(a[i] * Math.PI / 180)).toFixed(2) : "–"} · ${P.compass(N.az[k][i])}`);
+      traces.push({ x: offs, y: Array.from(a, v => v > 0 ? v : null), legendgroup: t.name, showlegend: false, mode: "lines", line: { color: col, width: 1 }, opacity: .4, text: txt, hoverinfo: "text" });
+      traces.push({ x: offs, y: Array.from(a, (v, i) => v > l[i] && N.dark[i] ? v : null), name: `${t.name}: transit ${P.clock(s.transit)}, max ${fmt(s.maxAlt)}°`, legendgroup: t.name, mode: "lines", line: { color: col, width: 3.5 }, text: txt, hoverinfo: "text" });
+      if (settings.horizon.length && tg.length <= 6) traces.push({ x: offs, y: Array.from(l), legendgroup: t.name, showlegend: false, mode: "lines", line: { color: col, width: 1, dash: "dot" }, hoverinfo: "skip" });
+      rows.push([t.name, s, col]);
+    });
+    if (!settings.horizon.length) shapes.push({ type: "line", xref: "paper", yref: "y", x0: 0, x1: 1, y0: settings.minAlt, y1: settings.minAlt, line: { color: c.muted, width: 1, dash: "dash" } });
+    traces.push({ x: [0, 14], y: [null, null], xaxis: "x2", yaxis: "y2", showlegend: false, hoverinfo: "skip", mode: "lines" }); // makes the UTC and airmass axes render
+    const xt = []; for (let h = 0; h <= 14; h++) xt.push(h);
+    const narrow = $("nightFig").clientWidth < 560, am = [1, 1.2, 1.5, 2, 3];
+    const ax = { gridcolor: c.grid, zerolinecolor: c.grid, color: c.muted, tickfont: { size: 12 } };
+    Plotly.react("nightFig", traces, {
+      paper_bgcolor: c.bg, plot_bgcolor: c.bg, font: { family: "Inter, sans-serif", color: c.ink, size: 13 },
+      width: $("nightFig").clientWidth, height: $("nightFig").clientHeight,
+      margin: narrow ? { l: 44, r: 40, t: 44, b: 48 } : { l: 56, r: 56, t: 44, b: 48 }, shapes, annotations: ann, hovermode: "closest",
+      legend: narrow ? { orientation: "h", y: -0.18 } : { x: 1.08, y: 1 },
+      xaxis: { ...ax, range: [0, 14], tickvals: xt.filter(h => !narrow || h % 2 === 0), ticktext: xt.filter(h => !narrow || h % 2 === 0).map(P.clock), title: { text: `Local time, evening of ${date}`, font: { size: 13 } } },
+      xaxis2: { ...ax, overlaying: "x", side: "top", range: [0, 14], tickvals: xt.filter(h => !narrow || h % 2 === 0), ticktext: xt.filter(h => !narrow || h % 2 === 0).map(h => String(((17 + h - settings.utc) % 24 + 24) % 24).padStart(2, "0")), title: { text: "UTC", font: { size: 12 } }, showgrid: false },
+      yaxis: { ...ax, range: [0, 90], title: { text: "Altitude (°)", font: { size: 13 } } },
+      yaxis2: { ...ax, overlaying: "y", side: "right", range: [0, 90], tickvals: am.map(v => Math.asin(1 / v) * 180 / Math.PI), ticktext: am.map(String), title: { text: "Airmass", font: { size: 13 } }, showgrid: false },
+    }, { displaylogo: false, responsive: true, modeBarButtonsToRemove: ["lasso2d", "select2d"] });
+    $("nightTable").tBodies[0].innerHTML = rows.map(([n, s, col]) =>
+      `<tr><td><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${col};margin-right:8px"></i>${esc(n)}</td><td class="n">${P.clock(s.transit)}</td><td class="n">${P.clock(s.best)}</td><td class="n">${fmt(s.maxAlt)}°</td><td class="n">${fmt(s.airmass, 2)}</td><td>${P.compass(s.az)}</td><td class="n">${fmt(s.lim)}°</td><td class="n">${s.usableNight ? P.clock(s.nightStart) + "–" + P.clock(s.nightEnd) : "never clears"}</td><td class="n">${fmt(s.usableNight, 1)}</td><td class="n">${fmt(s.moonSep)}°</td></tr>`).join("")
+      || `<tr><td colspan="10">Add a target above.</td></tr>`;
+    writeURL();
+  });
+}
+
+function bestTonight(date, n) {
+  const T = allTargets(), C = P.computeNights(T, [date], settings, 10);
+  return T.map((t, k) => [t.name, P.nightStats(C, k, 0)]).filter(([, s]) => s.usableNight > 0)
+    .sort((a, b) => b[1].usableNight * Math.sin(b[1].maxAlt * Math.PI / 180) - a[1].usableNight * Math.sin(a[1].maxAlt * Math.PI / 180)).slice(0, n).map(x => x[0]);
+}
+
+/* ---------- settings form ---------- */
+function fillForm() {
+  $("sName").value = settings.siteName; $("sLat").value = settings.lat; $("sLon").value = settings.lon; $("sUtc").value = settings.utc;
+  $("sMin").value = settings.minAlt; $("sTw").value = String(settings.twilight); $("sEnd").value = settings.sessionEnd === "dawn" ? "06:00" : settings.sessionEnd;
+  $("sOv").value = settings.overlap; $("sHz").value = settings.horizon.map(p => p.join(",")).join("\n"); $("refTime").value = settings.refTime;
+  $("siteName").textContent = settings.siteName; $("siteCoords").textContent = `${(+settings.lat).toFixed(4)}°, ${(+settings.lon).toFixed(4)}° · UTC${settings.utc >= 0 ? "+" : ""}${settings.utc}`;
+}
+function refreshTargetList() { $("targetList").innerHTML = allTargets().map(t => `<option value="${esc(t.name)}"></option>`).join(""); }
+
+/* ---------- events ---------- */
+$("settingsForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const hz = $("sHz").value.split(/\n+/).map(l => l.split(/[,\s]+/).map(Number)).filter(p => p.length >= 2 && isFinite(p[0]) && isFinite(p[1])).map(p => [p[0], p[1]]);
+  settings = { ...settings, siteName: $("sName").value.trim() || P.DEFAULTS.siteName, lat: +$("sLat").value, lon: +$("sLon").value, utc: +$("sUtc").value,
+    minAlt: +$("sMin").value, twilight: +$("sTw").value, sessionEnd: $("sEnd").value || "03:00", overlap: Math.max(0, +$("sOv").value || 0), horizon: hz };
+  fillForm(); route();
+});
+$("resetBtn").addEventListener("click", () => { settings = { ...P.DEFAULTS }; fillForm(); route(); });
+$("winSel").addEventListener("change", renderMonth);
+$("refTime").addEventListener("change", () => { settings.refTime = $("refTime").value || "21:00"; monthCache = null; renderMonth(); });
+$("monthTable").addEventListener("click", e => { const r = e.target.closest("tr[data-t]"); if (r) openNight(r.dataset.d, [r.dataset.t]); });
+$("monthTable").addEventListener("keydown", e => { const r = e.target.closest("tr[data-t]"); if (r && e.key === "Enter") openNight(r.dataset.d, [r.dataset.t]); });
+$("csvDl").addEventListener("click", () => {
+  try { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([toCSV()], { type: "text/csv" })); a.download = `seestar_${$("winSel").value}.csv`; document.body.appendChild(a); a.click(); a.remove(); }
+  catch (e) { $("monthStatus").textContent = "Download blocked here; use Copy CSV."; }
+});
+$("csvCopy").addEventListener("click", async () => { try { await navigator.clipboard.writeText(toCSV()); $("monthStatus").textContent = "CSV copied."; } catch (e) { $("monthStatus").textContent = "Copy blocked by the browser."; } });
+$("nightDate").addEventListener("change", renderNight);
+$("addTarget").addEventListener("change", () => { const n = $("addTarget").value.trim(); const t = byName(n) || allTargets().find(x => x.name.toLowerCase().includes(n.toLowerCase()));
+  if (t && !selected.includes(t.name)) { selected.push(t.name); renderNight(); } $("addTarget").value = ""; });
+$("chips").addEventListener("click", e => { const n = e.target.dataset?.rm; if (n) { selected = selected.filter(x => x !== n); if (!selected.length) selected = ["__none__"]; renderNight(); } });
+$("bestTonight").addEventListener("click", () => { selected = []; renderNight(); });
+$("clearTargets").addEventListener("click", () => { selected = ["__none__"]; renderNight(); });
+$("customForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const name = $("cName").value.trim().replace(/[~|,]/g, " ").slice(0, 40), r = $("cRA").value.trim(), d = $("cDec").value.trim();
+  const ra = P.parseRA(r), dec = P.parseDec(d);
+  if (!name || !isFinite(ra) || !isFinite(dec)) { $("nightStatus").textContent = "Check the RA/Dec format."; return; }
+  custom = custom.filter(t => t.name !== name).concat({ name, ra, dec, type: "custom", raText: r, decText: d });
+  refreshTargetList(); selected = selected.filter(n => n !== "__none__").concat(name); season = null; e.target.reset(); renderNight();
+});
+$("shareBtn").addEventListener("click", async () => { writeURL(); try { await navigator.clipboard.writeText($("shareUrl").value); $("shareBtn").textContent = "Link copied"; } catch (e) { $("shareUrl").select(); } setTimeout(() => $("shareBtn").textContent = "Copy share link", 1800); });
+addEventListener("hashchange", route);
+let rsz; const figRO = new ResizeObserver(() => { clearTimeout(rsz); rsz = setTimeout(() => { for (const id of ["monthFig", "nightFig"]) { const el = $(id); if (el.data && el.clientWidth) Plotly.relayout(el, { width: el.clientWidth, height: el.clientHeight }); } }, 150); });
+figRO.observe($("monthFig")); figRO.observe($("nightFig"));
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", route);
+new MutationObserver(route).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+/* ---------- boot ---------- */
+(async function start() {
+  try { const s = JSON.parse(localStorage.getItem("seestarSettings") || "null"); if (s) settings = { ...settings, ...s }; } catch (e) {}
+  const q = readURL();
+  try {
+    const r = await fetch("targets.json"); const j = await r.json();
+    CATALOG = j.targets.map(t => ({ name: String(t.name), ra: +t.ra, dec: +t.dec, type: String(t.type || "") }));
+  } catch (e) { $("monthStatus").textContent = "Could not load targets.json (open the site over http, not as a file)."; return; }
+  fillForm(); refreshTargetList();
+  ensureSeason();
+  if (q.has("w") && [...$("winSel").options].some(o => o.value === q.get("w"))) $("winSel").value = q.get("w");
+  route();
+})();
+}
+</script>
+</body>
+</html>

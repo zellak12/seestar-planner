@@ -1,0 +1,15 @@
+# Local horizon profile: azimuth (deg, 0=N, 90=E, 180=S, 270=W), obstruction altitude (deg)
+# Measure from the Seestar's height (crouch!) with a phone clinometer or fists (~10 deg each).
+# Points are linearly interpolated and wrap around 360. Add as many as you like.
+# The values below are PLACEHOLDERS — replace with your own measurements.
+az,alt
+0,15
+45,15
+90,15
+135,20
+160,30
+180,30
+200,25
+225,15
+270,15
+315,15

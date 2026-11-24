@@ -1,0 +1,67 @@
+# J2000 positions from the OpenNGC catalog (github.com/mattiaverga/OpenNGC) via pyongc.
+# Composite targets (pairs/groups) use the mean position of the listed members.
+# Add your own lines: name,ra,dec[,type,members]  (ra hh:mm:ss, dec ±dd:mm:ss; or decimal degrees)
+name,ra,dec,type,members
+M42_RunningMan,05:35:16,-05:07:01,emission,NGC1976 NGC1977
+Flame_Horsehead,05:41:21,-02:09:26,emission,NGC2024 B033
+Pleiades_M45,03:47:29,+24:06:19,reflection/cluster,Mel022
+California_NGC1499,04:03:14,+36:22:03,emission,NGC1499
+Rosette_NGC2237,06:31:56,+04:56:35,emission,NGC2244
+Cone_XmasTree_NGC2264,06:40:58,+09:53:44,emission,NGC2264
+Seagull_IC2177,07:04:37,-10:28:16,emission,IC2177
+Jellyfish_IC443,06:16:37,+22:31:54,emission (SNR),IC0443
+ThorsHelmet_NGC2359,07:18:31,-13:13:38,emission,NGC2359
+Beehive_M44,08:40:22,+19:40:19,cluster,NGC2632
+NGC2903,09:32:10,+21:30:03,galaxy,NGC2903
+M81_M82,09:55:43,+69:22:20,galaxy,NGC3031 NGC3034
+LeoTriplet,11:19:49,+13:13:28,galaxy,NGC3623 NGC3627 NGC3628
+Markarian_Chain,12:27:56,+13:10:03,galaxy,NGC4374 NGC4406 NGC4435 NGC4438 NGC4461 NGC4473 NGC4477
+M106,12:18:58,+47:18:14,galaxy,NGC4258
+Needle_NGC4565,12:36:21,+25:59:16,galaxy,NGC4565
+Whale_Hockey_NGC4631,12:43:03,+32:21:18,galaxy,NGC4631 NGC4656
+Whirlpool_M51,13:29:53,+47:11:43,galaxy,NGC5194
+Pinwheel_M101,14:03:13,+54:20:56,galaxy,NGC5457
+CentaurusA_NGC5128,13:25:28,-43:01:09,galaxy,NGC5128
+M13,16:41:42,+36:27:41,cluster,NGC6205
+Antares_M4,16:23:35,-26:31:32,cluster/reflection,NGC6121
+CatsPaw_NGC6334,17:20:50,-36:06:10,emission,NGC6334
+Lagoon_Trifid,18:03:12,-23:40:34,emission,NGC6523 NGC6514
+StarCloud_M24,18:16:56,-18:30:52,star cloud,IC4715
+Eagle_M16,18:18:48,-13:48:26,emission,NGC6611
+Swan_M17,18:20:47,-16:10:18,emission,NGC6618
+Dumbbell_M27,19:59:36,+22:43:16,planetary,NGC6853
+Crescent_NGC6888,20:12:07,+38:21:18,emission,NGC6888
+Sadr_IC1318,20:22:14,+40:15:24,emission,IC1318
+Veil_center,20:51:07,+31:10:31,emission (SNR),NGC6960 NGC6992
+NorthAmerica_NGC7000,20:59:17,+44:31:44,emission,NGC7000
+ElephantsTrunk_IC1396,21:38:58,+57:29:21,emission,IC1396
+Cocoon_IC5146,21:53:29,+47:16:01,emission,IC5146
+Helix_NGC7293,22:29:39,-20:50:14,planetary,NGC7293
+Bubble_M52,23:22:46,+61:24:13,emission,NGC7635 NGC7654
+NGC55,00:14:54,-39:11:48,galaxy,NGC0055
+M31,00:42:44,+41:16:09,galaxy,NGC0224
+NGC253,00:47:33,-25:17:18,galaxy,NGC0253
+Pacman_NGC281,00:52:59,+56:37:19,emission,NGC0281
+M33,01:33:51,+30:39:37,galaxy,NGC0598
+DoubleCluster,02:20:45,+57:07:53,cluster,NGC0869 NGC0884
+Heart_IC1805,02:32:42,+61:27:25,emission,IC1805
+Soul_IC1848,02:51:11,+60:24:09,emission,IC1848
+NGC1097,02:46:19,-30:16:30,galaxy,NGC1097
+Fornax_NGC1399,03:38:29,-35:27:02,galaxy,NGC1399
+NGC1365,03:33:36,-36:08:25,galaxy,NGC1365
+FlamingStar_Tadpoles,05:19:37,+33:51:50,emission,IC0405 IC0410
+M3,13:42:11,+28:22:32,cluster,NGC5272
+Sombrero_M104,12:39:59,-11:37:23,galaxy,NGC4594
+SouthernPinwheel_M83,13:37:01,-29:51:56,galaxy,NGC5236
+BlackEye_M64,12:56:44,+21:40:59,galaxy,NGC4826
+Sunflower_M63,13:15:49,+42:01:45,galaxy,NGC5055
+Antennae_NGC4038,12:01:53,-18:52:37,galaxy,NGC4038 NGC4039
+M5,15:18:34,+02:04:58,cluster,NGC5904
+Ring_M57,18:53:35,+33:01:43,planetary,NGC6720
+WildDuck_M11,18:51:06,-06:16:12,cluster,NGC6705
+M92,17:17:07,+43:08:12,cluster,NGC6341
+Butterfly_M6,17:40:21,-32:15:15,cluster,NGC6405
+Ptolemy_M7,17:53:51,-34:47:34,cluster,NGC6475
+Prawn_IC4628,16:56:58,-40:27:04,emission,IC4628
+Fireworks_NGC6946,20:34:52,+60:09:14,galaxy,NGC6946
+M71,19:53:46,+18:46:42,cluster,NGC6838

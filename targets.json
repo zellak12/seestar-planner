@@ -1,0 +1,572 @@
+{
+ "source": "J2000 positions from OpenNGC (github.com/mattiaverga/OpenNGC, CC-BY-SA 4.0) via pyongc; composite targets use the mean position of their members.",
+ "targets": [
+  {
+   "name": "M42_RunningMan",
+   "ra": 83.81667,
+   "dec": -5.11694,
+   "ra_hms": "05:35:16",
+   "dec_dms": "-05:07:01",
+   "type": "emission",
+   "members": "NGC1976 NGC1977"
+  },
+  {
+   "name": "Flame_Horsehead",
+   "ra": 85.3375,
+   "dec": -2.15722,
+   "ra_hms": "05:41:21",
+   "dec_dms": "-02:09:26",
+   "type": "emission",
+   "members": "NGC2024 B033"
+  },
+  {
+   "name": "Pleiades_M45",
+   "ra": 56.87083,
+   "dec": 24.10528,
+   "ra_hms": "03:47:29",
+   "dec_dms": "+24:06:19",
+   "type": "reflection/cluster",
+   "members": "Mel022"
+  },
+  {
+   "name": "California_NGC1499",
+   "ra": 60.80833,
+   "dec": 36.3675,
+   "ra_hms": "04:03:14",
+   "dec_dms": "+36:22:03",
+   "type": "emission",
+   "members": "NGC1499"
+  },
+  {
+   "name": "Rosette_NGC2237",
+   "ra": 97.98333,
+   "dec": 4.94306,
+   "ra_hms": "06:31:56",
+   "dec_dms": "+04:56:35",
+   "type": "emission",
+   "members": "NGC2244"
+  },
+  {
+   "name": "Cone_XmasTree_NGC2264",
+   "ra": 100.24167,
+   "dec": 9.89556,
+   "ra_hms": "06:40:58",
+   "dec_dms": "+09:53:44",
+   "type": "emission",
+   "members": "NGC2264"
+  },
+  {
+   "name": "Seagull_IC2177",
+   "ra": 106.15417,
+   "dec": -10.47111,
+   "ra_hms": "07:04:37",
+   "dec_dms": "-10:28:16",
+   "type": "emission",
+   "members": "IC2177"
+  },
+  {
+   "name": "Jellyfish_IC443",
+   "ra": 94.15417,
+   "dec": 22.53167,
+   "ra_hms": "06:16:37",
+   "dec_dms": "+22:31:54",
+   "type": "emission (SNR)",
+   "members": "IC0443"
+  },
+  {
+   "name": "ThorsHelmet_NGC2359",
+   "ra": 109.62917,
+   "dec": -13.22722,
+   "ra_hms": "07:18:31",
+   "dec_dms": "-13:13:38",
+   "type": "emission",
+   "members": "NGC2359"
+  },
+  {
+   "name": "Beehive_M44",
+   "ra": 130.09167,
+   "dec": 19.67194,
+   "ra_hms": "08:40:22",
+   "dec_dms": "+19:40:19",
+   "type": "cluster",
+   "members": "NGC2632"
+  },
+  {
+   "name": "NGC2903",
+   "ra": 143.04167,
+   "dec": 21.50083,
+   "ra_hms": "09:32:10",
+   "dec_dms": "+21:30:03",
+   "type": "galaxy",
+   "members": "NGC2903"
+  },
+  {
+   "name": "M81_M82",
+   "ra": 148.92917,
+   "dec": 69.37222,
+   "ra_hms": "09:55:43",
+   "dec_dms": "+69:22:20",
+   "type": "galaxy",
+   "members": "NGC3031 NGC3034"
+  },
+  {
+   "name": "LeoTriplet",
+   "ra": 169.95417,
+   "dec": 13.22444,
+   "ra_hms": "11:19:49",
+   "dec_dms": "+13:13:28",
+   "type": "galaxy",
+   "members": "NGC3623 NGC3627 NGC3628"
+  },
+  {
+   "name": "Markarian_Chain",
+   "ra": 186.98333,
+   "dec": 13.1675,
+   "ra_hms": "12:27:56",
+   "dec_dms": "+13:10:03",
+   "type": "galaxy",
+   "members": "NGC4374 NGC4406 NGC4435 NGC4438 NGC4461 NGC4473 NGC4477"
+  },
+  {
+   "name": "M106",
+   "ra": 184.74167,
+   "dec": 47.30389,
+   "ra_hms": "12:18:58",
+   "dec_dms": "+47:18:14",
+   "type": "galaxy",
+   "members": "NGC4258"
+  },
+  {
+   "name": "Needle_NGC4565",
+   "ra": 189.0875,
+   "dec": 25.98778,
+   "ra_hms": "12:36:21",
+   "dec_dms": "+25:59:16",
+   "type": "galaxy",
+   "members": "NGC4565"
+  },
+  {
+   "name": "Whale_Hockey_NGC4631",
+   "ra": 190.7625,
+   "dec": 32.355,
+   "ra_hms": "12:43:03",
+   "dec_dms": "+32:21:18",
+   "type": "galaxy",
+   "members": "NGC4631 NGC4656"
+  },
+  {
+   "name": "Whirlpool_M51",
+   "ra": 202.47083,
+   "dec": 47.19528,
+   "ra_hms": "13:29:53",
+   "dec_dms": "+47:11:43",
+   "type": "galaxy",
+   "members": "NGC5194"
+  },
+  {
+   "name": "Pinwheel_M101",
+   "ra": 210.80417,
+   "dec": 54.34889,
+   "ra_hms": "14:03:13",
+   "dec_dms": "+54:20:56",
+   "type": "galaxy",
+   "members": "NGC5457"
+  },
+  {
+   "name": "CentaurusA_NGC5128",
+   "ra": 201.36667,
+   "dec": -43.01917,
+   "ra_hms": "13:25:28",
+   "dec_dms": "-43:01:09",
+   "type": "galaxy",
+   "members": "NGC5128"
+  },
+  {
+   "name": "M13",
+   "ra": 250.425,
+   "dec": 36.46139,
+   "ra_hms": "16:41:42",
+   "dec_dms": "+36:27:41",
+   "type": "cluster",
+   "members": "NGC6205"
+  },
+  {
+   "name": "Antares_M4",
+   "ra": 245.89583,
+   "dec": -26.52556,
+   "ra_hms": "16:23:35",
+   "dec_dms": "-26:31:32",
+   "type": "cluster/reflection",
+   "members": "NGC6121"
+  },
+  {
+   "name": "CatsPaw_NGC6334",
+   "ra": 260.20833,
+   "dec": -36.10278,
+   "ra_hms": "17:20:50",
+   "dec_dms": "-36:06:10",
+   "type": "emission",
+   "members": "NGC6334"
+  },
+  {
+   "name": "Lagoon_Trifid",
+   "ra": 270.8,
+   "dec": -23.67611,
+   "ra_hms": "18:03:12",
+   "dec_dms": "-23:40:34",
+   "type": "emission",
+   "members": "NGC6523 NGC6514"
+  },
+  {
+   "name": "StarCloud_M24",
+   "ra": 274.23333,
+   "dec": -18.51444,
+   "ra_hms": "18:16:56",
+   "dec_dms": "-18:30:52",
+   "type": "star cloud",
+   "members": "IC4715"
+  },
+  {
+   "name": "Eagle_M16",
+   "ra": 274.7,
+   "dec": -13.80722,
+   "ra_hms": "18:18:48",
+   "dec_dms": "-13:48:26",
+   "type": "emission",
+   "members": "NGC6611"
+  },
+  {
+   "name": "Swan_M17",
+   "ra": 275.19583,
+   "dec": -16.17167,
+   "ra_hms": "18:20:47",
+   "dec_dms": "-16:10:18",
+   "type": "emission",
+   "members": "NGC6618"
+  },
+  {
+   "name": "Dumbbell_M27",
+   "ra": 299.9,
+   "dec": 22.72111,
+   "ra_hms": "19:59:36",
+   "dec_dms": "+22:43:16",
+   "type": "planetary",
+   "members": "NGC6853"
+  },
+  {
+   "name": "Crescent_NGC6888",
+   "ra": 303.02917,
+   "dec": 38.355,
+   "ra_hms": "20:12:07",
+   "dec_dms": "+38:21:18",
+   "type": "emission",
+   "members": "NGC6888"
+  },
+  {
+   "name": "Sadr_IC1318",
+   "ra": 305.55833,
+   "dec": 40.25667,
+   "ra_hms": "20:22:14",
+   "dec_dms": "+40:15:24",
+   "type": "emission",
+   "members": "IC1318"
+  },
+  {
+   "name": "Veil_center",
+   "ra": 312.77917,
+   "dec": 31.17528,
+   "ra_hms": "20:51:07",
+   "dec_dms": "+31:10:31",
+   "type": "emission (SNR)",
+   "members": "NGC6960 NGC6992"
+  },
+  {
+   "name": "NorthAmerica_NGC7000",
+   "ra": 314.82083,
+   "dec": 44.52889,
+   "ra_hms": "20:59:17",
+   "dec_dms": "+44:31:44",
+   "type": "emission",
+   "members": "NGC7000"
+  },
+  {
+   "name": "ElephantsTrunk_IC1396",
+   "ra": 324.74167,
+   "dec": 57.48917,
+   "ra_hms": "21:38:58",
+   "dec_dms": "+57:29:21",
+   "type": "emission",
+   "members": "IC1396"
+  },
+  {
+   "name": "Cocoon_IC5146",
+   "ra": 328.37083,
+   "dec": 47.26694,
+   "ra_hms": "21:53:29",
+   "dec_dms": "+47:16:01",
+   "type": "emission",
+   "members": "IC5146"
+  },
+  {
+   "name": "Helix_NGC7293",
+   "ra": 337.4125,
+   "dec": -20.83722,
+   "ra_hms": "22:29:39",
+   "dec_dms": "-20:50:14",
+   "type": "planetary",
+   "members": "NGC7293"
+  },
+  {
+   "name": "Bubble_M52",
+   "ra": 350.69167,
+   "dec": 61.40361,
+   "ra_hms": "23:22:46",
+   "dec_dms": "+61:24:13",
+   "type": "emission",
+   "members": "NGC7635 NGC7654"
+  },
+  {
+   "name": "NGC55",
+   "ra": 3.725,
+   "dec": -39.19667,
+   "ra_hms": "00:14:54",
+   "dec_dms": "-39:11:48",
+   "type": "galaxy",
+   "members": "NGC0055"
+  },
+  {
+   "name": "M31",
+   "ra": 10.68333,
+   "dec": 41.26917,
+   "ra_hms": "00:42:44",
+   "dec_dms": "+41:16:09",
+   "type": "galaxy",
+   "members": "NGC0224"
+  },
+  {
+   "name": "NGC253",
+   "ra": 11.8875,
+   "dec": -25.28833,
+   "ra_hms": "00:47:33",
+   "dec_dms": "-25:17:18",
+   "type": "galaxy",
+   "members": "NGC0253"
+  },
+  {
+   "name": "Pacman_NGC281",
+   "ra": 13.24583,
+   "dec": 56.62194,
+   "ra_hms": "00:52:59",
+   "dec_dms": "+56:37:19",
+   "type": "emission",
+   "members": "NGC0281"
+  },
+  {
+   "name": "M33",
+   "ra": 23.4625,
+   "dec": 30.66028,
+   "ra_hms": "01:33:51",
+   "dec_dms": "+30:39:37",
+   "type": "galaxy",
+   "members": "NGC0598"
+  },
+  {
+   "name": "DoubleCluster",
+   "ra": 35.1875,
+   "dec": 57.13139,
+   "ra_hms": "02:20:45",
+   "dec_dms": "+57:07:53",
+   "type": "cluster",
+   "members": "NGC0869 NGC0884"
+  },
+  {
+   "name": "Heart_IC1805",
+   "ra": 38.175,
+   "dec": 61.45694,
+   "ra_hms": "02:32:42",
+   "dec_dms": "+61:27:25",
+   "type": "emission",
+   "members": "IC1805"
+  },
+  {
+   "name": "Soul_IC1848",
+   "ra": 42.79583,
+   "dec": 60.4025,
+   "ra_hms": "02:51:11",
+   "dec_dms": "+60:24:09",
+   "type": "emission",
+   "members": "IC1848"
+  },
+  {
+   "name": "NGC1097",
+   "ra": 41.57917,
+   "dec": -30.275,
+   "ra_hms": "02:46:19",
+   "dec_dms": "-30:16:30",
+   "type": "galaxy",
+   "members": "NGC1097"
+  },
+  {
+   "name": "Fornax_NGC1399",
+   "ra": 54.62083,
+   "dec": -35.45056,
+   "ra_hms": "03:38:29",
+   "dec_dms": "-35:27:02",
+   "type": "galaxy",
+   "members": "NGC1399"
+  },
+  {
+   "name": "NGC1365",
+   "ra": 53.4,
+   "dec": -36.14028,
+   "ra_hms": "03:33:36",
+   "dec_dms": "-36:08:25",
+   "type": "galaxy",
+   "members": "NGC1365"
+  },
+  {
+   "name": "FlamingStar_Tadpoles",
+   "ra": 79.90417,
+   "dec": 33.86389,
+   "ra_hms": "05:19:37",
+   "dec_dms": "+33:51:50",
+   "type": "emission",
+   "members": "IC0405 IC0410"
+  },
+  {
+   "name": "M3",
+   "ra": 205.54583,
+   "dec": 28.37556,
+   "ra_hms": "13:42:11",
+   "dec_dms": "+28:22:32",
+   "type": "cluster",
+   "members": "NGC5272"
+  },
+  {
+   "name": "Sombrero_M104",
+   "ra": 189.99583,
+   "dec": -11.62306,
+   "ra_hms": "12:39:59",
+   "dec_dms": "-11:37:23",
+   "type": "galaxy",
+   "members": "NGC4594"
+  },
+  {
+   "name": "SouthernPinwheel_M83",
+   "ra": 204.25417,
+   "dec": -29.86556,
+   "ra_hms": "13:37:01",
+   "dec_dms": "-29:51:56",
+   "type": "galaxy",
+   "members": "NGC5236"
+  },
+  {
+   "name": "BlackEye_M64",
+   "ra": 194.18333,
+   "dec": 21.68306,
+   "ra_hms": "12:56:44",
+   "dec_dms": "+21:40:59",
+   "type": "galaxy",
+   "members": "NGC4826"
+  },
+  {
+   "name": "Sunflower_M63",
+   "ra": 198.95417,
+   "dec": 42.02917,
+   "ra_hms": "13:15:49",
+   "dec_dms": "+42:01:45",
+   "type": "galaxy",
+   "members": "NGC5055"
+  },
+  {
+   "name": "Antennae_NGC4038",
+   "ra": 180.47083,
+   "dec": -18.87694,
+   "ra_hms": "12:01:53",
+   "dec_dms": "-18:52:37",
+   "type": "galaxy",
+   "members": "NGC4038 NGC4039"
+  },
+  {
+   "name": "M5",
+   "ra": 229.64167,
+   "dec": 2.08278,
+   "ra_hms": "15:18:34",
+   "dec_dms": "+02:04:58",
+   "type": "cluster",
+   "members": "NGC5904"
+  },
+  {
+   "name": "Ring_M57",
+   "ra": 283.39583,
+   "dec": 33.02861,
+   "ra_hms": "18:53:35",
+   "dec_dms": "+33:01:43",
+   "type": "planetary",
+   "members": "NGC6720"
+  },
+  {
+   "name": "WildDuck_M11",
+   "ra": 282.775,
+   "dec": -6.27,
+   "ra_hms": "18:51:06",
+   "dec_dms": "-06:16:12",
+   "type": "cluster",
+   "members": "NGC6705"
+  },
+  {
+   "name": "M92",
+   "ra": 259.27917,
+   "dec": 43.13667,
+   "ra_hms": "17:17:07",
+   "dec_dms": "+43:08:12",
+   "type": "cluster",
+   "members": "NGC6341"
+  },
+  {
+   "name": "Butterfly_M6",
+   "ra": 265.0875,
+   "dec": -32.25417,
+   "ra_hms": "17:40:21",
+   "dec_dms": "-32:15:15",
+   "type": "cluster",
+   "members": "NGC6405"
+  },
+  {
+   "name": "Ptolemy_M7",
+   "ra": 268.4625,
+   "dec": -34.79278,
+   "ra_hms": "17:53:51",
+   "dec_dms": "-34:47:34",
+   "type": "cluster",
+   "members": "NGC6475"
+  },
+  {
+   "name": "Prawn_IC4628",
+   "ra": 254.24167,
+   "dec": -40.45111,
+   "ra_hms": "16:56:58",
+   "dec_dms": "-40:27:04",
+   "type": "emission",
+   "members": "IC4628"
+  },
+  {
+   "name": "Fireworks_NGC6946",
+   "ra": 308.71667,
+   "dec": 60.15389,
+   "ra_hms": "20:34:52",
+   "dec_dms": "+60:09:14",
+   "type": "galaxy",
+   "members": "NGC6946"
+  },
+  {
+   "name": "M71",
+   "ra": 298.44167,
+   "dec": 18.77833,
+   "ra_hms": "19:53:46",
+   "dec_dms": "+18:46:42",
+   "type": "cluster",
+   "members": "NGC6838"
+  }
+ ]
+}
